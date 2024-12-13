@@ -3,8 +3,8 @@ pragma solidity ^0.8.18;
 
 // Uncomment this line to use console.log
 import "hardhat/console.sol";
-import "./base/MutableAsset.sol";
-import "./base/SmartPolicy.sol";
+import "../base/MutableAsset.sol";
+import "../base/SmartPolicy.sol";
 
 /**
  * @title Smart Asset which represents a Participant
