@@ -10,16 +10,6 @@ import { ethers } from "hardhat";
 import { string } from "hardhat/internal/core/params/argumentTypes";
 import * as _ from "../typechain-types";
 import { deployChoreographyNMT } from "../helper/deployTestAssets";
-import { BigNumber } from "ethers";
-
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-
-const TOKEN_ID1_STRING = "1158808384137004768675244516077074077445013636396";
-const TOKEN_ID2_STRING = "908326538895415626116914244041615655093740059278";
-
-
-const ASSET_ADDRESS1 = "0xCafac3dD18aC6c6e92c921884f9E4176737C052c";
-const ASSET_ADDRESS2 = "0x9f1ac54BEF0DD2f6f3462EA0fa94fC62300d3a8e";
 
 describe("Choreography NMT tests", function () {
 
