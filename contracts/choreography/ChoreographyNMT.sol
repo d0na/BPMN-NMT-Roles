@@ -14,7 +14,7 @@ import "./HolderSmartPolicy.sol";
  */
 contract ChoreographyNMT is NMT {
     constructor(
-        address to,
+        address to
     )
         NMT()
         ERC721(
