@@ -22,16 +22,6 @@ abstract contract NMT is ERC721Enumerable {
         address holderSmartPolicy
     )
         public
-        evaluatedByPrincipal(
-            msg.sender,
-            abi.encodeWithSignature(
-                "mint(address,address,address)",
-                to,
-                creatorSmartPolicy,
-                holderSmartPolicy
-            ),
-            address(this)
-        )
         returns (address, uint)
     {
         // console.log("Miner", to);
@@ -64,23 +54,6 @@ abstract contract NMT is ERC721Enumerable {
         return _intToAddress(_tokenId);
     }
 
-    function setPrincipalSmartPolicy(
-        address smartPolicyAddress
-    )
-        public
-        virtual
-        evaluatedByPrincipal(
-            msg.sender,
-            abi.encodeWithSignature(
-                "setPrincipal(address)",
-                smartPolicyAddress
-            ),
-            address(this)
-        )
-    {
-        principalSmartPolicy = smartPolicyAddress;
-    }
-
     //-----Override delle funzioni previste dallo standard per il trasferimento dei token-----
     function transferFrom(
         address from,
@@ -110,22 +83,6 @@ abstract contract NMT is ERC721Enumerable {
         payable(from).transfer(msg.value); // send the ETH to the seller
     }
 
-    /** MODIFIERs */
-    modifier evaluatedByPrincipal(
-        address _subject,
-        bytes memory _action,
-        address _resource
-    ) {
-        require(
-            SmartPolicy(principalSmartPolicy).evaluate(
-                _subject,
-                _action,
-                _resource
-            ) == true,
-            "Operation DENIED by PRINCIPAL policy"
-        );
-        _;
-    }
 
     /* modifier used to evaluate the policy related to the creator transferFrom */
     modifier _transferFromEvaluation(
