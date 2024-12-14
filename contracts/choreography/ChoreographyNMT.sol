@@ -15,9 +15,8 @@ import "./HolderSmartPolicy.sol";
 contract ChoreographyNMT is NMT {
     constructor(
         address to,
-        address principalSmartPolicy
     )
-        NMT(principalSmartPolicy)
+        NMT()
         ERC721(
             "Mutable Choreography for a PUB Decentraland UniPi Project",
             "PUBMNTCHOREO"
