@@ -9,10 +9,8 @@ import "./MutableAsset.sol";
 import "./SmartPolicy.sol";
 
 abstract contract NMT is ERC721Enumerable {
-    address public principalSmartPolicy;
 
-    constructor(address _principalSmartPolicy) {
-        principalSmartPolicy = _principalSmartPolicy;
+    constructor() {
     }
 
     /**
