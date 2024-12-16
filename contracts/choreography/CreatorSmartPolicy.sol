@@ -17,11 +17,7 @@ contract CreatorSmartPolicy is SmartPolicy {
         // Replace this with actual creator-check logic
         address creator = _resource; // Assuming resource stores creator's address
 
-        if (_subject == creator) {
-            return true; // Allow
-        }
-
-        return false; // Deny
+        return true; // Deny
     }
 
     fallback() external {
