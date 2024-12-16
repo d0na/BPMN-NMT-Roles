@@ -9,7 +9,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { string } from "hardhat/internal/core/params/argumentTypes";
 import * as _ from "../typechain-types";
-import { deployChoreographyNMT, deployParticipantNMT } from "../helper/deployTestAssets";
+import { deployChoreographyNMTFixture, deployParticipantNMTFixture } from "../helper/deployTestAssets";
 
 const BPMN_IPFS_HASH = "QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq";
 
@@ -19,7 +19,7 @@ describe("Choreography NMT tests", function () {
 
         it("should allow a Creator to mint and own a new Choreography NMT", async function () {
             const { choreographyNMT, creator, creatorSmartPolicy } =
-                await loadFixture(deployChoreographyNMT);
+                await loadFixture(deployChoreographyNMTFixture);
 
             // Simulate the mint call to retrieve the asset address and token ID
             const mintResponse = await choreographyNMT.callStatic.mint(
@@ -53,7 +53,7 @@ describe("Participant NMT tests", function () {
 
         it("should allow a Creator to mint and own a new Participant NMT", async function () {
             const { participantNMT, creator, creatorSmartPolicy } =
-                await loadFixture(deployParticipantNMT);
+                await loadFixture(deployParticipantNMTFixture);
 
             // Simulate the mint call to retrieve the asset address and token ID
             const mintResponse = await participantNMT.callStatic.mint(
