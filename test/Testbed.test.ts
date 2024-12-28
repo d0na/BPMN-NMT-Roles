@@ -144,6 +144,74 @@ describe("Testbed scenario", function () {
             // Verify participant2 is now the owner of the token
             expect(await participantNMT.ownerOf(participantTokenIds[0])).to.equal(owner1.address);
         });
-    });
+
+        it("should allow setting the name", async function () {
+            const { participantMutableAsset1 } =
+            await loadFixture(deployAndMintFixture);
+            const name = "Participant A";
+            const tokenURI = "ipfs://example-token-uri";
+        
+            await participantMutableAsset1.setName(name, tokenURI);
+        
+            const descriptor = await participantMutableAsset1.participantDescriptor();
+            expect(descriptor.name).to.equal(name);
+          });
+        
+          it("should allow setting the BPMN", async function () {
+            const { participantMutableAsset1 } =
+            await loadFixture(deployAndMintFixture);
+            const bpmn = "BPMN Model Content";
+            const tokenURI = "ipfs://example-token-uri-bpmn";
+        
+            await participantMutableAsset1.setBpmn(bpmn, tokenURI);
+        
+            const descriptor = await participantMutableAsset1.participantDescriptor();
+            expect(descriptor.bpmn).to.equal(bpmn);
+          });
+        
+          it("should allow setting messages", async function () {
+            const { participantMutableAsset1 } =
+            await loadFixture(deployAndMintFixture);
+            const messages = [ethers.utils.formatBytes32String("Message1"), ethers.utils.formatBytes32String("Message2")];
+        
+            await participantMutableAsset1.setMessages(messages);
+        
+            const descriptor = await participantMutableAsset1.participantDescriptor();
+            expect(descriptor.messages).to.deep.equal(messages);
+          });
+        1
+          it("should emit StateChanged event on updates", async function () {
+            const { participantMutableAsset1 } =
+            await loadFixture(deployAndMintFixture);
+            const name = "Updated Participant";
+            const tokenURI = "ipfs://updated-token-uri";
+        
+            await expect(participantMutableAsset1.setName(name, tokenURI))
+              .to.emit(participantMutableAsset1, "StateChanged")
+              .withArgs(await participantMutableAsset1.participantDescriptor());
+        
+            const bpmn = "Updated BPMN Model";
+            await expect(participantMutableAsset1.setBpmn(bpmn, tokenURI))
+              .to.emit(participantMutableAsset1, "StateChanged")
+              .withArgs(await participantMutableAsset1.participantDescriptor());
+        
+            const messages = [ethers.utils.formatBytes32String("UpdatedMessage1")];
+            await expect(participantMutableAsset1.setMessages(messages))
+              .to.emit(participantMutableAsset1, "StateChanged")
+              .withArgs(await participantMutableAsset1.participantDescriptor());
+          });
+        
+          it("should revert when a non-authorized user tries to set attributes", async function () {
+            const [creator, owner1, owner2] = await ethers.getSigners();
+            const { participantMutableAsset1 } =
+            await loadFixture(deployAndMintFixture);
+            const name = "Unauthorized User";
+            const tokenURI = "ipfs://unauthorized-token-uri";
+        
+            await expect(
+                participantMutableAsset1.connect(owner2).setName(name, tokenURI)
+            ).to.be.revertedWith("SmartPolicy: Unauthorized");
+          });
+    });         
 });
 

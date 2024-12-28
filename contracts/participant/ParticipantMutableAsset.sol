@@ -24,6 +24,7 @@ contract ParticipantMutableAsset is MutableAsset {
     struct ParticipantDescriptor {
         string name;
         string bpmn;
+        bytes32[] messages;
     }
 
     // Current state representing participant descriptor with its attributes
@@ -86,6 +87,23 @@ contract ParticipantMutableAsset is MutableAsset {
     {
         participantDescriptor.bpmn = _bpmn;
         setTokenURI(_tokenURI);
+        emit StateChanged(participantDescriptor);
+    }
+
+    function setMessages(
+        bytes32[] memory _messages
+    )
+        public
+        evaluatedBySmartPolicies(
+            msg.sender,
+            abi.encodeWithSignature(
+                "setMessagese(bytes32[])",
+                _messages
+            ),
+            address(this)
+        )
+    {
+        participantDescriptor.messages = _messages;
         emit StateChanged(participantDescriptor);
     }
 }
