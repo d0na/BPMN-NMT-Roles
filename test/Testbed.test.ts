@@ -9,7 +9,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { string } from "hardhat/internal/core/params/argumentTypes";
 import * as _ from "../typechain-types";
-import { deployChoreographyNMTFixture, deployParticipantNMTFixture, deployAndMintFixture } from "../helper/deployTestAssets";
+import { deployChoreographyNMTFixture, deploySupplierNMTFixture, deployAndMintFixture } from "../helper/deployTestAssets";
 import { choreography } from "../typechain-types/contracts";
 
 describe("Testbed scenario", function () {
@@ -18,16 +18,16 @@ describe("Testbed scenario", function () {
 
         it("should init correctly the scene with 3 mutable assets participants and 1 choreography", async function () {
             const PARTICIPANTS = [
-                { id: "558130032094690731733874505575102638784315995105", address: "0x61c36a8d610163660E21a8b7359e1Cac0C9133e1" },
-                { id: "204704989530607081745330947688586125522717815614", address: "0x23dB4a08f2272df049a4932a4Cc3A6Dc1002B33E" },
-                { id: "816253975297965843894876292431442714180448216066", address: "0x8EFa1819Ff5B279077368d44B593a4543280e402" }
+                { id: "336897280941227070015277647710367950591535833707", address: "0x3B02fF1e626Ed7a8fd6eC5299e2C54e1421B626B" },
+                { id: "792424011868018141238267758512067827571006849535", address: "0x8aCd85898458400f7Db866d53FCFF6f0D49741FF" },
+                { id: "179488605541745556890669495909881143792961313405", address: "0x1F708C24a0D3A740cD47cC0444E9480899f3dA7D" }
             ]
-
             const CHOREOGRAPHY = {
                 id: "669813349446218200219945466590326061637985309937", address: "0x75537828f2ce51be7289709686A69CbFDbB714F1"
             }
             const testbed =
                 await loadFixture(deployAndMintFixture);
+
             // console.log(testbed);
             /** CHECKING THE PARTICIPANTS DATA */
             expect(testbed.participantTokenIds[0]).to.be.eq(PARTICIPANTS[0].id);
@@ -39,6 +39,23 @@ describe("Testbed scenario", function () {
             /** CHECKING THE CHOREOGRAPHY DATA  */
             expect(testbed.choreTokenId).to.be.eq(CHOREOGRAPHY.id);
             expect(testbed.choreTokenAddress).to.be.eq(CHOREOGRAPHY.address);
+        });
+
+        it("should transfer a Choreography asset from one owner to another", async function () {
+            const [creator, owner1, owner2] = await ethers.getSigners();
+            const { choreographyNMT,choreography } =
+                await loadFixture(deployChoreographyNMTFixture);
+
+            // Verify participant1 is the owner of the minted token
+            expect(await choreographyNMT.ownerOf(choreography.tokenId)).to.equal(creator.address);
+
+            // Step 2: Transfer the asset from participant1 to participant2
+            await choreographyNMT
+                .connect(creator)
+                .transferFrom(creator.address, owner1.address, choreography.tokenId);
+
+            // Verify participant2 is now the owner of the token
+            expect(await choreographyNMT.ownerOf(choreography.tokenId)).to.equal(owner1.address);
         });
     });
     describe("ChoreographyNMT", function () {
@@ -81,16 +98,16 @@ describe("Testbed scenario", function () {
             const newTokenURI = "ipfs://updatedTokenURI";
 
             // Call setParticipants to update participants and the token URI
-            const txParticipants = await choreographyMutableAsset.setParticipants(participants, newTokenURI);
+            const txSuppliers = await choreographyMutableAsset.setParticipants(participants, newTokenURI);
 
             // Verify that the participants were updated correctly
-            const descriptorAfterParticipants = await choreographyMutableAsset.getChoreographyDescriptor();
-            expect(descriptorAfterParticipants.participants).to.deep.equal(participants);
+            const descriptorAfterSuppliers = await choreographyMutableAsset.getChoreographyDescriptor();
+            expect(descriptorAfterSuppliers.participants).to.deep.equal(participants);
 
             // Verify that the correct event was emitted for participants
-            const receiptParticipants = await txParticipants.wait();
-            const eventParticipants = receiptParticipants.events.find((e: any) => e.event === "StateChanged");
-            expect(eventParticipants.args.choreographyDescriptor.participants).to.deep.equal(participants);
+            const receiptSuppliers = await txSuppliers.wait();
+            const eventSuppliers = receiptSuppliers.events.find((e: any) => e.event === "StateChanged");
+            expect(eventSuppliers.args.choreographyDescriptor.participants).to.deep.equal(participants);
         });
 
         it("should allow adding a new participant while retaining existing ones", async function () {
@@ -98,62 +115,62 @@ describe("Testbed scenario", function () {
                 await loadFixture(deployAndMintFixture);
             const participants = [participantTokenAddresses[0], participantTokenAddresses[1]];
 
-            const initialParticipants = [participantTokenAddresses[0], participantTokenAddresses[1]];
-            const newParticipant = participantTokenAddresses[2];
+            const initialSuppliers = [participantTokenAddresses[0], participantTokenAddresses[1]];
+            const newSupplier = participantTokenAddresses[2];
             const tokenURI = "ipfs://updatedTokenURI";
 
             // Step 1: Add the first two participants
-            await choreographyMutableAsset.setParticipants(initialParticipants, tokenURI);
+            await choreographyMutableAsset.setParticipants(initialSuppliers, tokenURI);
 
             // Verify that the initial participants were added correctly
             let descriptor = await choreographyMutableAsset.getChoreographyDescriptor();
-            expect(descriptor.participants).to.deep.equal(initialParticipants);
+            expect(descriptor.participants).to.deep.equal(initialSuppliers);
 
             // Step 2: Add a new participant
-            const updatedParticipants = [...initialParticipants, newParticipant];
-            await choreographyMutableAsset.setParticipants(updatedParticipants, tokenURI);
+            const updatedSuppliers = [...initialSuppliers, newSupplier];
+            await choreographyMutableAsset.setParticipants(updatedSuppliers, tokenURI);
 
             // Verify that the new participant was added while retaining the existing ones
             descriptor = await choreographyMutableAsset.getChoreographyDescriptor();
-            expect(descriptor.participants).to.deep.equal(updatedParticipants);
+            expect(descriptor.participants).to.deep.equal(updatedSuppliers);
 
             // Verify the event emission
             // Call setParticipants to update participants and the token URI
-            const txParticipants = await choreographyMutableAsset.setParticipants(participants, tokenURI);
+            const txSuppliers = await choreographyMutableAsset.setParticipants(participants, tokenURI);
 
             // Verify that the participants were updated correctly
-            const descriptorAfterParticipants = await choreographyMutableAsset.getChoreographyDescriptor();
-            expect(descriptorAfterParticipants.participants).to.deep.equal(participants);
+            const descriptorAfterSuppliers = await choreographyMutableAsset.getChoreographyDescriptor();
+            expect(descriptorAfterSuppliers.participants).to.deep.equal(participants);
         });
     });
-    describe("PartipantNMT", function () {
+    describe("ParticipantsNMT", function () {
 
-        it("should transfer a Participant asset from one owner to another", async function () {
+        it("should transfer a Supplier asset from one owner to another", async function () {
             const [creator, owner1, owner2] = await ethers.getSigners();
-            const { participantNMT, participantTokenIds, partCreator } =
+            const { supplierNMT, participantTokenIds, supplierCreator } =
                 await loadFixture(deployAndMintFixture);
 
             // Verify participant1 is the owner of the minted token
-            expect(await participantNMT.ownerOf(participantTokenIds[0])).to.equal(partCreator.address);
+            expect(await supplierNMT.ownerOf(participantTokenIds[0])).to.equal(supplierCreator.address);
 
             // Step 2: Transfer the asset from participant1 to participant2
-            await participantNMT
-                .connect(partCreator)
-                .transferFrom(partCreator.address, owner1.address, participantTokenIds[0]);
+            await supplierNMT
+                .connect(supplierCreator)
+                .transferFrom(supplierCreator.address, owner1.address, participantTokenIds[0]);
 
             // Verify participant2 is now the owner of the token
-            expect(await participantNMT.ownerOf(participantTokenIds[0])).to.equal(owner1.address);
+            expect(await supplierNMT.ownerOf(participantTokenIds[0])).to.equal(owner1.address);
         });
 
         it("should allow setting the name", async function () {
             const { participantMutableAsset1 } =
             await loadFixture(deployAndMintFixture);
-            const name = "Participant A";
+            const name = "Supplier A";
             const tokenURI = "ipfs://example-token-uri";
         
             await participantMutableAsset1.setName(name, tokenURI);
         
-            const descriptor = await participantMutableAsset1.participantDescriptor();
+            const descriptor = await participantMutableAsset1.supplierDescriptor();
             expect(descriptor.name).to.equal(name);
           });
         
@@ -165,7 +182,7 @@ describe("Testbed scenario", function () {
         
             await participantMutableAsset1.setBpmn(bpmn, tokenURI);
         
-            const descriptor = await participantMutableAsset1.participantDescriptor();
+            const descriptor = await participantMutableAsset1.supplierDescriptor();
             expect(descriptor.bpmn).to.equal(bpmn);
           });
         
@@ -176,29 +193,29 @@ describe("Testbed scenario", function () {
         
             await participantMutableAsset1.setMessages(messages);
         
-            const descriptor = await participantMutableAsset1.participantDescriptor();
+            const descriptor = await participantMutableAsset1.supplierDescriptor();
             expect(descriptor.messages).to.deep.equal(messages);
           });
         1
           it("should emit StateChanged event on updates", async function () {
             const { participantMutableAsset1 } =
             await loadFixture(deployAndMintFixture);
-            const name = "Updated Participant";
+            const name = "Updated Supplier";
             const tokenURI = "ipfs://updated-token-uri";
         
             await expect(participantMutableAsset1.setName(name, tokenURI))
               .to.emit(participantMutableAsset1, "StateChanged")
-              .withArgs(await participantMutableAsset1.participantDescriptor());
+              .withArgs(await participantMutableAsset1.supplierDescriptor());
         
             const bpmn = "Updated BPMN Model";
             await expect(participantMutableAsset1.setBpmn(bpmn, tokenURI))
               .to.emit(participantMutableAsset1, "StateChanged")
-              .withArgs(await participantMutableAsset1.participantDescriptor());
+              .withArgs(await participantMutableAsset1.supplierDescriptor());
         
             const messages = [ethers.utils.formatBytes32String("UpdatedMessage1")];
             await expect(participantMutableAsset1.setMessages(messages))
               .to.emit(participantMutableAsset1, "StateChanged")
-              .withArgs(await participantMutableAsset1.participantDescriptor());
+              .withArgs(await participantMutableAsset1.supplierDescriptor());
           });
         
           it("should revert when a non-authorized user tries to set attributes", async function () {
