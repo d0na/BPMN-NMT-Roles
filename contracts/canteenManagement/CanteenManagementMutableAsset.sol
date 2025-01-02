@@ -22,8 +22,9 @@ contract CanteenManagementMutableAsset is MutableAsset {
 
     // CanteenManagement descriptor
     struct CanteenManagementDescriptor {
-        string name;
+        bytes32 name;
         string bpmn;
+        bytes32 descriptor;
         bytes32[] messages;
     }
 
@@ -34,7 +35,7 @@ contract CanteenManagementMutableAsset is MutableAsset {
      * 
      * TODO forse visto che canteenManagementDescriptor è public nn doverebbe servire
      */
-    function getCanteenManagementDescriptor()
+    function getDescriptor()
         public
         view
         returns (CanteenManagementDescriptor memory)
@@ -51,43 +52,37 @@ contract CanteenManagementMutableAsset is MutableAsset {
     fallback() external {}
 
     function setName(
-        string memory _name,
-        string memory _tokenURI
+        bytes32  _name
     )
         public
         evaluatedBySmartPolicies(
             msg.sender,
             abi.encodeWithSignature(
-                "setName(string,string)",
-                _name,
-                _tokenURI
+                "setName(bytes32)",
+                _name
             ),
             address(this)
         )
     {
-        canteenManagementDescriptor.name = _name;
-        setTokenURI(_tokenURI);
-        emit StateChanged(canteenManagementDescriptor);
+         canteenManagementDescriptor.name = _name;
+        emit StateChanged( canteenManagementDescriptor);
     }
 
     function setBpmn(
-        string memory _bpmn,
-        string memory _tokenURI
+        string memory _bpmn
     )
         public
         evaluatedBySmartPolicies(
             msg.sender,
             abi.encodeWithSignature(
-                "setBpmn(string,string)",
-                _bpmn,
-                _tokenURI
+                "setBpmn(string)",
+                _bpmn
             ),
             address(this)
         )
     {
-        canteenManagementDescriptor.bpmn = _bpmn;
-        setTokenURI(_tokenURI);
-        emit StateChanged(canteenManagementDescriptor);
+          canteenManagementDescriptor.bpmn = _bpmn;
+        emit StateChanged(  canteenManagementDescriptor);
     }
 
     function setMessages(
@@ -103,7 +98,21 @@ contract CanteenManagementMutableAsset is MutableAsset {
             address(this)
         )
     {
-        canteenManagementDescriptor.messages = _messages;
-        emit StateChanged(canteenManagementDescriptor);
+          canteenManagementDescriptor.messages = _messages;
+        emit StateChanged(  canteenManagementDescriptor);
+    }
+
+    function setTokenURI(
+        string memory _uri
+    )
+        public
+        evaluatedBySmartPolicies(
+            msg.sender,
+            abi.encodeWithSignature(
+                "setTokenURI(string)"),
+            address(this)
+        )
+    {
+        _setTokenURI(_uri);
     }
 }

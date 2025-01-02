@@ -22,8 +22,9 @@ contract ParticipantMutableAsset is MutableAsset {
 
     // Participant descriptor
     struct ParticipantDescriptor {
-        string name;
+        bytes32 name;
         string bpmn;
+        bytes32 descriptor;
         bytes32[] messages;
     }
 
@@ -51,43 +52,37 @@ contract ParticipantMutableAsset is MutableAsset {
     fallback() external {}
 
     function setName(
-        string memory _name,
-        string memory _tokenURI
+        bytes32  _name
     )
         public
         evaluatedBySmartPolicies(
             msg.sender,
             abi.encodeWithSignature(
-                "setName(string,string)",
-                _name,
-                _tokenURI
+                "setName(bytes32)",
+                _name
             ),
             address(this)
         )
     {
         participantDescriptor.name = _name;
-        setTokenURI(_tokenURI);
         emit StateChanged(participantDescriptor);
     }
 
     function setBpmn(
-        string memory _bpmn,
-        string memory _tokenURI
+        string memory _bpmn
     )
         public
         evaluatedBySmartPolicies(
             msg.sender,
             abi.encodeWithSignature(
-                "setBpmn(string,string)",
-                _bpmn,
-                _tokenURI
+                "setBpmn(string)",
+                _bpmn
             ),
             address(this)
         )
     {
-        participantDescriptor.bpmn = _bpmn;
-        setTokenURI(_tokenURI);
-        emit StateChanged(participantDescriptor);
+         participantDescriptor.bpmn = _bpmn;
+        emit StateChanged( participantDescriptor);
     }
 
     function setMessages(
@@ -103,7 +98,21 @@ contract ParticipantMutableAsset is MutableAsset {
             address(this)
         )
     {
-        participantDescriptor.messages = _messages;
-        emit StateChanged(participantDescriptor);
+         participantDescriptor.messages = _messages;
+        emit StateChanged( participantDescriptor);
+    }
+
+    function setTokenURI(
+        string memory _uri
+    )
+        public
+        evaluatedBySmartPolicies(
+            msg.sender,
+            abi.encodeWithSignature(
+                "setTokenURI(string)"),
+            address(this)
+        )
+    {
+        _setTokenURI(_uri);
     }
 }

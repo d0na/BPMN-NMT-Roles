@@ -21,28 +21,29 @@ contract SupplierMutableAsset is MutableAsset {
     ) MutableAsset(_nmt, _creatorSmartPolicy, _holderSmartPolicy) {}
 
     // Supplier descriptor
-    struct SupplierDescriptor {
-        string name;
+    struct Descriptor {
+        bytes32 name;
         string bpmn;
+        bytes32 descriptor;
         bytes32[] messages;
     }
 
     // Current state representing supplier descriptor with its attributes
-    SupplierDescriptor public supplierDescriptor;
+    Descriptor public descriptor;
 
     /** Retrieves all the attributes of the descriptor Supplier
      * 
      * TODO forse visto che supplierDescriptor è public nn doverebbe servire
      */
-    function getSupplierDescriptor()
+    function getDescriptor()
         public
         view
-        returns (SupplierDescriptor memory)
+        returns (Descriptor memory)
     {
-        return (supplierDescriptor);
+        return (descriptor);
     }
 
-    event StateChanged(SupplierDescriptor supplierDescriptor);
+    event StateChanged(Descriptor descriptor);
 
     /**
      * USERS ACTIONS with attached policy
@@ -51,43 +52,37 @@ contract SupplierMutableAsset is MutableAsset {
     fallback() external {}
 
     function setName(
-        string memory _name,
-        string memory _tokenURI
+        bytes32  _name
     )
         public
         evaluatedBySmartPolicies(
             msg.sender,
             abi.encodeWithSignature(
-                "setName(string,string)",
-                _name,
-                _tokenURI
+                "setName(bytes32)",
+                _name
             ),
             address(this)
         )
     {
-        supplierDescriptor.name = _name;
-        setTokenURI(_tokenURI);
-        emit StateChanged(supplierDescriptor);
+        descriptor.name = _name;
+        emit StateChanged(descriptor);
     }
 
     function setBpmn(
-        string memory _bpmn,
-        string memory _tokenURI
+        string memory _bpmn
     )
         public
         evaluatedBySmartPolicies(
             msg.sender,
             abi.encodeWithSignature(
-                "setBpmn(string,string)",
-                _bpmn,
-                _tokenURI
+                "setBpmn(string)",
+                _bpmn
             ),
             address(this)
         )
     {
-        supplierDescriptor.bpmn = _bpmn;
-        setTokenURI(_tokenURI);
-        emit StateChanged(supplierDescriptor);
+        descriptor.bpmn = _bpmn;
+        emit StateChanged(descriptor);
     }
 
     function setMessages(
@@ -103,7 +98,21 @@ contract SupplierMutableAsset is MutableAsset {
             address(this)
         )
     {
-        supplierDescriptor.messages = _messages;
-        emit StateChanged(supplierDescriptor);
+        descriptor.messages = _messages;
+        emit StateChanged(descriptor);
+    }
+
+    function setTokenURI(
+        string memory _uri
+    )
+        public
+        evaluatedBySmartPolicies(
+            msg.sender,
+            abi.encodeWithSignature(
+                "setTokenURI(string)"),
+            address(this)
+        )
+    {
+        _setTokenURI(_uri);
     }
 }

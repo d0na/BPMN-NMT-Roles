@@ -68,20 +68,20 @@ abstract contract NMT is ERC721Enumerable {
         super.transferFrom(from, to, tokenId);
     }
 
-    function payableTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public payable {
-        MutableAsset(getMutableAssetAddress(tokenId)).payableTransferFrom(
-            from,
-            to,
-            msg.value
-        );
-        super.transferFrom(from, to, tokenId);
-        // Optional: Transfer the fee
-        payable(from).transfer(msg.value); // send the ETH to the seller
-    }
+    // function payableTransferFrom(
+    //     address from,
+    //     address to,
+    //     uint256 tokenId
+    // ) public payable {
+    //     MutableAsset(getMutableAssetAddress(tokenId)).payableTransferFrom(
+    //         from,
+    //         to,
+    //         msg.value
+    //     );
+    //     super.transferFrom(from, to, tokenId);
+    //     // Optional: Transfer the fee
+    //     payable(from).transfer(msg.value); // send the ETH to the seller
+    // }
 
 
     /* modifier used to evaluate the policy related to the creator transferFrom */

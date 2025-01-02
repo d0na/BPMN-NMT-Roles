@@ -214,7 +214,18 @@ export async function deployAndMintFixture() {
 
     const SupplierMutableAsset = await ethers.getContractFactory(
         "SupplierMutableAsset"
-    ); const ChoreographyMutableAsset = await ethers.getContractFactory(
+    );
+
+    const ParticipantMutableAsset = await ethers.getContractFactory(
+        "ParticipantMutableAsset"
+    );
+
+
+    const CanteenManagementMutableAsset = await ethers.getContractFactory(
+        "CanteenManagementMutableAsset"
+    );
+
+    const ChoreographyMutableAsset = await ethers.getContractFactory(
         "ChoreographyMutableAsset"
     );
 
@@ -237,9 +248,9 @@ export async function deployAndMintFixture() {
         choreTokenAddress: choreography.tokenAddress,
         choreTokenId: choreography.tokenId,
         choreographyMutableAsset: ChoreographyMutableAsset.attach(choreography.tokenAddress),
-        participantMutableAsset1: SupplierMutableAsset.attach(participantTokenAddresses[0]),
-        participantMutableAsset2: SupplierMutableAsset.attach(participantTokenAddresses[1]),
-        participantMutableAsset3: SupplierMutableAsset.attach(participantTokenAddresses[2])
+        supplierMutableAsset: SupplierMutableAsset.attach(supplierResult.tokenAddress),
+        CanteenManagementMutableAsset: CanteenManagementMutableAsset.attach(canteenMngResult.tokenAddress),
+        participantMutableAsset: ParticipantMutableAsset.attach(participantResult.tokenAddress)
 
     };
 }

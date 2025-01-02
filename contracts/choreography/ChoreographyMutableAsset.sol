@@ -18,24 +18,15 @@ contract ChoreographyMutableAsset is MutableAsset {
     ) MutableAsset(_nmt, _creatorSmartPolicy, _holderSmartPolicy) {}
 
     // Choreography descriptor
-    struct ChoreographyDescriptor {
+    struct Descriptor {
         address[] participants;
         string bpmn;
     }
 
     // Current state representing choreography descriptor with its attributes
-    ChoreographyDescriptor public choreographyDescriptor;
+    Descriptor public descriptor;
 
-    /** Retrieves all the attributes of the descriptor Choreography */
-    function getChoreographyDescriptor()
-        public
-        view
-        returns (ChoreographyDescriptor memory)
-    {
-        return (choreographyDescriptor);
-    }
-
-    event StateChanged(ChoreographyDescriptor choreographyDescriptor);
+    event StateChanged(Descriptor descriptor);
 
     /**
      * USERS ACTIONS with attached policy
@@ -44,42 +35,51 @@ contract ChoreographyMutableAsset is MutableAsset {
     fallback() external {}
 
     function setParticipants(
-        address[] memory _participants,
-        string memory _tokenURI
+        address[] memory _participants
     )
         public
         evaluatedBySmartPolicies(
             msg.sender,
             abi.encodeWithSignature(
-                "setParticipants(address[],string)",
-                _participants,
-                _tokenURI
+                "setParticipants(address[])",
+                _participants
             ),
             address(this)
         )
     {
-        choreographyDescriptor.participants = _participants;
-        setTokenURI(_tokenURI);
-        emit StateChanged(choreographyDescriptor);
+        descriptor.participants = new address[](_participants.length);
+        for (uint256 i = 0; i < _participants.length; i++) {
+            console.log("Participant", i, _participants[i]);
+            descriptor.participants[i] = _participants[i]; 
+        }
+        console.log("descriptor.participants",descriptor.participants[0]);
+        emit StateChanged(descriptor);
     }
 
     function setBpmn(
-        string memory _bpmn,
-        string memory _tokenURI
+        string memory _bpmn
     )
         public
         evaluatedBySmartPolicies(
             msg.sender,
-            abi.encodeWithSignature(
-                "setBpmn(string,string)",
-                _bpmn,
-                _tokenURI
-            ),
+            abi.encodeWithSignature("setBpmn(string,string)", _bpmn),
             address(this)
         )
     {
-        choreographyDescriptor.bpmn = _bpmn;
-        setTokenURI(_tokenURI);
-        emit StateChanged(choreographyDescriptor);
+        descriptor.bpmn = _bpmn;
+        emit StateChanged(descriptor);
+    }
+
+    function setTokenURI(
+        string memory _uri
+    )
+        public
+        evaluatedBySmartPolicies(
+            msg.sender,
+            abi.encodeWithSignature("setTokenURI(string)"),
+            address(this)
+        )
+    {
+        _setTokenURI(_uri);
     }
 }

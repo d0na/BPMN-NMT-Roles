@@ -35,7 +35,7 @@ abstract contract MutableAsset {
         creatorSmartPolicy = _creatorSmartPolicy;
     }
 
-    function setTokenURI(string memory _tokenUri) internal virtual {
+    function _setTokenURI(string memory _tokenUri) internal virtual {
         tokenURI = _tokenUri;
     }
 
@@ -101,32 +101,32 @@ abstract contract MutableAsset {
         return true;
     }
 
-    /** regulate the transferFrom method  */
-    function payableTransferFrom(
-        address from,
-        address to,
-        uint256 amount
-    )
-        public
-        virtual
-        onlyNMT
-        evaluatedByCreator(
-            msg.sender,
-            abi.encodeWithSignature(
-                "payableTransferFrom(address,address,uint256)",
-                from,
-                to,
-                amount
-            ),
-            address(this)
-        )
-        returns (
-            bool
-        )
-    {
-        holderSmartPolicy = 0x0000000000000000000000000000000000000000;
-        return true;
-    }
+    // /** regulate the transferFrom method  */
+    // function payableTransferFrom(
+    //     address from,
+    //     address to,
+    //     uint256 amount
+    // )
+    //     public
+    //     virtual
+    //     onlyNMT
+    //     evaluatedByCreator(
+    //         msg.sender,
+    //         abi.encodeWithSignature(
+    //             "payableTransferFrom(address,address,uint256)",
+    //             from,
+    //             to,
+    //             amount
+    //         ),
+    //         address(this)
+    //     )
+    //     returns (
+    //         bool
+    //     )
+    // {
+    //     holderSmartPolicy = 0x0000000000000000000000000000000000000000;
+    //     return true;
+    // }
 
     /**
      * MODIFIERS
