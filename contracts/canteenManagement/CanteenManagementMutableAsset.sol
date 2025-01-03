@@ -115,4 +115,8 @@ contract CanteenManagementMutableAsset is MutableAsset {
     {
         _setTokenURI(_uri);
     }
+
+    function getMessages() public view returns (bytes32[] memory) {
+        return canteenManagementDescriptor.messages;
+    }    
 }

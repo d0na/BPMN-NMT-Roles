@@ -23,6 +23,9 @@ contract ChoreographyMutableAsset is MutableAsset {
         string bpmn;
     }
 
+    function getParticipants() public view returns (address[] memory) {
+        return descriptor.participants;
+    }
     // Current state representing choreography descriptor with its attributes
     Descriptor public descriptor;
 
@@ -47,12 +50,11 @@ contract ChoreographyMutableAsset is MutableAsset {
             address(this)
         )
     {
-        descriptor.participants = new address[](_participants.length);
-        for (uint256 i = 0; i < _participants.length; i++) {
-            console.log("Participant", i, _participants[i]);
-            descriptor.participants[i] = _participants[i]; 
-        }
-        console.log("descriptor.participants",descriptor.participants[0]);
+        // descriptor.participants = new address[](_participants.length);
+        // for (uint256 i = 0; i < _participants.length; i++) {
+        //     descriptor.participants[i] = _participants[i]; 
+        // }
+        descriptor.participants = _participants;
         emit StateChanged(descriptor);
     }
 

@@ -115,4 +115,8 @@ contract ParticipantMutableAsset is MutableAsset {
     {
         _setTokenURI(_uri);
     }
+    
+    function getMessages() public view returns (bytes32[] memory) {
+        return participantDescriptor.messages;
+    }    
 }
