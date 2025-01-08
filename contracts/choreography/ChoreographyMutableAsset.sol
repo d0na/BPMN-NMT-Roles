@@ -50,10 +50,6 @@ contract ChoreographyMutableAsset is MutableAsset {
             address(this)
         )
     {
-        // descriptor.participants = new address[](_participants.length);
-        // for (uint256 i = 0; i < _participants.length; i++) {
-        //     descriptor.participants[i] = _participants[i]; 
-        // }
         descriptor.participants = _participants;
         emit StateChanged(descriptor);
     }

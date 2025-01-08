@@ -51,6 +51,23 @@ contract SupplierMutableAsset is MutableAsset {
 
     fallback() external {}
 
+    function setDescriptor(
+        bytes32  _descriptor
+    )
+        public
+        evaluatedBySmartPolicies(
+            msg.sender,
+            abi.encodeWithSignature(
+                "setDescriptor(bytes32)",
+                _descriptor
+            ),
+            address(this)
+        )
+    {
+        descriptor.descriptor = _descriptor;
+        emit StateChanged(descriptor);
+    }
+
     function setName(
         bytes32  _name
     )
@@ -92,7 +109,7 @@ contract SupplierMutableAsset is MutableAsset {
         evaluatedBySmartPolicies(
             msg.sender,
             abi.encodeWithSignature(
-                "setMessagese(bytes32[])",
+                "setMessages(bytes32[])",
                 _messages
             ),
             address(this)

@@ -15,9 +15,13 @@ contract CreatorSmartPolicy is SmartPolicy {
         // Example logic: Allow only the creator of the resource to perform actions
         // Check if the subject is the creator (simplified logic here)
         // Replace this with actual creator-check logic
-        address creator = _resource; // Assuming resource stores creator's address
+        // address creator = _resource; // Assuming resource stores creator's address
+        if (_subject == 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266) {
+            return true;
+        }
 
-        return true; // Deny
+        
+        return false; // Deny
     }
 
     fallback() external {

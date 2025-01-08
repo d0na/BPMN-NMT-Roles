@@ -32,7 +32,7 @@ contract CanteenManagementMutableAsset is MutableAsset {
     CanteenManagementDescriptor public canteenManagementDescriptor;
 
     /** Retrieves all the attributes of the descriptor CanteenManagement
-     * 
+     *
      * TODO forse visto che canteenManagementDescriptor è public nn doverebbe servire
      */
     function getDescriptor()
@@ -51,21 +51,32 @@ contract CanteenManagementMutableAsset is MutableAsset {
 
     fallback() external {}
 
-    function setName(
-        bytes32  _name
+    function setDescriptor(
+        bytes32 _descriptor
     )
         public
         evaluatedBySmartPolicies(
             msg.sender,
-            abi.encodeWithSignature(
-                "setName(bytes32)",
-                _name
-            ),
+            abi.encodeWithSignature("setDescriptor(bytes32)", _descriptor),
             address(this)
         )
     {
-         canteenManagementDescriptor.name = _name;
-        emit StateChanged( canteenManagementDescriptor);
+        canteenManagementDescriptor.descriptor = _descriptor;
+        emit StateChanged(canteenManagementDescriptor);
+    }
+
+    function setName(
+        bytes32 _name
+    )
+        public
+        evaluatedBySmartPolicies(
+            msg.sender,
+            abi.encodeWithSignature("setName(bytes32)", _name),
+            address(this)
+        )
+    {
+        canteenManagementDescriptor.name = _name;
+        emit StateChanged(canteenManagementDescriptor);
     }
 
     function setBpmn(
@@ -74,15 +85,12 @@ contract CanteenManagementMutableAsset is MutableAsset {
         public
         evaluatedBySmartPolicies(
             msg.sender,
-            abi.encodeWithSignature(
-                "setBpmn(string)",
-                _bpmn
-            ),
+            abi.encodeWithSignature("setBpmn(string)", _bpmn),
             address(this)
         )
     {
-          canteenManagementDescriptor.bpmn = _bpmn;
-        emit StateChanged(  canteenManagementDescriptor);
+        canteenManagementDescriptor.bpmn = _bpmn;
+        emit StateChanged(canteenManagementDescriptor);
     }
 
     function setMessages(
@@ -91,15 +99,12 @@ contract CanteenManagementMutableAsset is MutableAsset {
         public
         evaluatedBySmartPolicies(
             msg.sender,
-            abi.encodeWithSignature(
-                "setMessagese(bytes32[])",
-                _messages
-            ),
+            abi.encodeWithSignature("setMessages(bytes32[])", _messages),
             address(this)
         )
     {
-          canteenManagementDescriptor.messages = _messages;
-        emit StateChanged(  canteenManagementDescriptor);
+        canteenManagementDescriptor.messages = _messages;
+        emit StateChanged(canteenManagementDescriptor);
     }
 
     function setTokenURI(
@@ -108,8 +113,7 @@ contract CanteenManagementMutableAsset is MutableAsset {
         public
         evaluatedBySmartPolicies(
             msg.sender,
-            abi.encodeWithSignature(
-                "setTokenURI(string)"),
+            abi.encodeWithSignature("setTokenURI(string)"),
             address(this)
         )
     {
@@ -118,5 +122,5 @@ contract CanteenManagementMutableAsset is MutableAsset {
 
     function getMessages() public view returns (bytes32[] memory) {
         return canteenManagementDescriptor.messages;
-    }    
+    }
 }

@@ -32,7 +32,7 @@ contract ParticipantMutableAsset is MutableAsset {
     ParticipantDescriptor public participantDescriptor;
 
     /** Retrieves all the attributes of the descriptor Participant
-     * 
+     *
      * TODO forse visto che participantDescriptor è public nn doverebbe servire
      */
     function getParticipantDescriptor()
@@ -52,19 +52,30 @@ contract ParticipantMutableAsset is MutableAsset {
     fallback() external {}
 
     function setName(
-        bytes32  _name
+        bytes32 _name
     )
         public
         evaluatedBySmartPolicies(
             msg.sender,
-            abi.encodeWithSignature(
-                "setName(bytes32)",
-                _name
-            ),
+            abi.encodeWithSignature("setName(bytes32)", _name),
             address(this)
         )
     {
         participantDescriptor.name = _name;
+        emit StateChanged(participantDescriptor);
+    }
+
+    function setDescriptor(
+        bytes32 _descriptor
+    )
+        public
+        evaluatedBySmartPolicies(
+            msg.sender,
+            abi.encodeWithSignature("setDescriptor(bytes32)", _descriptor),
+            address(this)
+        )
+    {
+        participantDescriptor.descriptor = _descriptor;
         emit StateChanged(participantDescriptor);
     }
 
@@ -74,15 +85,12 @@ contract ParticipantMutableAsset is MutableAsset {
         public
         evaluatedBySmartPolicies(
             msg.sender,
-            abi.encodeWithSignature(
-                "setBpmn(string)",
-                _bpmn
-            ),
+            abi.encodeWithSignature("setBpmn(string)", _bpmn),
             address(this)
         )
     {
-         participantDescriptor.bpmn = _bpmn;
-        emit StateChanged( participantDescriptor);
+        participantDescriptor.bpmn = _bpmn;
+        emit StateChanged(participantDescriptor);
     }
 
     function setMessages(
@@ -91,15 +99,12 @@ contract ParticipantMutableAsset is MutableAsset {
         public
         evaluatedBySmartPolicies(
             msg.sender,
-            abi.encodeWithSignature(
-                "setMessagese(bytes32[])",
-                _messages
-            ),
+            abi.encodeWithSignature("setMessagese(bytes32[])", _messages),
             address(this)
         )
     {
-         participantDescriptor.messages = _messages;
-        emit StateChanged( participantDescriptor);
+        participantDescriptor.messages = _messages;
+        emit StateChanged(participantDescriptor);
     }
 
     function setTokenURI(
@@ -108,15 +113,14 @@ contract ParticipantMutableAsset is MutableAsset {
         public
         evaluatedBySmartPolicies(
             msg.sender,
-            abi.encodeWithSignature(
-                "setTokenURI(string)"),
+            abi.encodeWithSignature("setTokenURI(string)"),
             address(this)
         )
     {
         _setTokenURI(_uri);
     }
-    
+
     function getMessages() public view returns (bytes32[] memory) {
         return participantDescriptor.messages;
-    }    
+    }
 }
