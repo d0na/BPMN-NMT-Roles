@@ -8,8 +8,8 @@ import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { string } from "hardhat/internal/core/params/argumentTypes";
-import * as _ from "../typechain-types";
-import { deployChoreographyNMTFixture, deploySupplierNMTFixture ,deployCanteenManagementNMTFixture} from "../helper/deployTestAssets";
+import * as _ from "../../typechain-types";
+import { deployChoreographyNMTFixture, deploySupplierNMTFixture ,deployCanteenManagementNMTFixture} from "../../helper/deployTestAssets";
 
 const BPMN_IPFS_HASH = "QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq";
 

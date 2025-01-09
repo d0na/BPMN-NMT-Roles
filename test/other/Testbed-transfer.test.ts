@@ -8,9 +8,9 @@ import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { string } from "hardhat/internal/core/params/argumentTypes";
-import * as _ from "../typechain-types";
-import { deployChoreographyNMTFixture, deploySupplierNMTFixture, deployAndMintFixture } from "../helper/deployTestAssets";
-import { choreography } from "../typechain-types/contracts";
+import * as _ from "../../typechain-types";
+import { deployChoreographyNMTFixture, deploySupplierNMTFixture, deployAndMintFixture } from "../../helper/deployTestAssets";
+import { choreography } from "../../typechain-types/contracts";
 
 describe("Testbed scenario - [Transfer]", function () {
 

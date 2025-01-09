@@ -228,7 +228,11 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
             const newMessage = ethers.utils.formatBytes32String("New Message");
             const updatedMessages = [...messages, newMessage];
             await supplierAssetContract.connect(supplier2).setHolderSmartPolicy(supplierHolderSmartPolicy.address);
+            console.log("updatedMessages", updatedMessages);
             const tx = await supplierAssetContract.connect(municipality).setMessages(updatedMessages);
+            const receipt = await tx.wait();
+            console.log(`Gas used [setMessages]: ${receipt.gasUsed.toString()}`);
+
             const descriptorMessages = await supplierAssetContract.getMessages();
             expect(descriptorMessages).to.deep.equal(updatedMessages);
         });
@@ -275,8 +279,9 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
         it("Should allow the creator Municipality to add the updated BPMN model to the Choreography Mutable Asset", async function () {
             const bpmn = "ipfs://choreography-updated-canteen-bpmn";
             const tx = await chorAssetContract.connect(municipality).setBpmn(bpmn);
-
             const receipt = await tx.wait();
+            console.log(`Gas used [setBpmn]: ${receipt.gasUsed.toString()}`);
+
             const event = receipt.events?.find((e: any) => e.event === "StateChanged");
             expect(event?.args?.descriptor.bpmn).to.deep.equal(bpmn);
         });
