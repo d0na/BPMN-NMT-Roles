@@ -77,7 +77,6 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
         const supplierAssetAddress = ethers.BigNumber.from(supplierTokenId).toHexString();
         SupplierMutableAsset = await ethers.getContractFactory("SupplierMutableAsset");
         supplierAssetContract = SupplierMutableAsset.attach(supplierAssetAddress);
-
         /** CanteenManagement */
 
         // ** CanteenCreatorSmartPolicy **
@@ -106,6 +105,7 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
         const canteenAssetAddress = ethers.BigNumber.from(canteenTokenId).toHexString();
         CanteenManagementMutableAsset = await ethers.getContractFactory("CanteenManagementMutableAsset");
         canteenAssetContract = CanteenManagementMutableAsset.attach(canteenAssetAddress);
+
 
         // // ** AllowMunicipalitySmartPolicy **
         // const AllowMunicipalitySmartContract = await ethers.getContractFactory("AllowMunicipalitySmartPolicy");

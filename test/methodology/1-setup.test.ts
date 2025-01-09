@@ -65,7 +65,11 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
         SupplierNMT = await ethers.getContractFactory("SupplierNMT");
         supplierNMT = await SupplierNMT.deploy(municipality.address);
         await supplierNMT.deployed();
+        const rr = await supplierNMT.deployTransaction.wait();
 
+        // GAs used
+        const gasUsed = rr.gasUsed;
+        console.log(`Gas used[supplierNMT]: ${gasUsed.toString()}`);
         // ** Supplier token mint hold by  supplier1 **
         const txSupplier = await supplierNMT
             .connect(municipality)
@@ -78,8 +82,7 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
         SupplierMutableAsset = await ethers.getContractFactory("SupplierMutableAsset");
         supplierAssetContract = SupplierMutableAsset.attach(supplierAssetAddress);
 
-        /** CanteenManagement */
-
+        /* CanteenManagement */
         // ** CanteenCreatorSmartPolicy **
         const CanteenCreatorSmartPolicy = await ethers.getContractFactory("contracts/canteenManagement/CreatorSmartPolicy.sol:CreatorSmartPolicy");
         canteenManagementCreatorSmartPolicy = await CanteenCreatorSmartPolicy.deploy();
@@ -120,6 +123,8 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
                 const descriptor = ethers.utils.formatBytes32String("Supplier SRL");
                 // await supplierAssetContract.connect(supplier1).setHolderSmartPolicy(allowMunicipalitySmartPolicy.address);
                 const tx = await supplierAssetContract.connect(supplier1).setDescriptor(descriptor);
+                const r1 = await tx.wait();
+                console.log(`Gas used [setDescriptor Supplier]: ${r1.gasUsed.toString()}`);
 
                 const receipt = await tx.wait();
                 const event = receipt.events?.find((e: any) => e.event === "StateChanged");
@@ -130,6 +135,8 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
                 const descriptor = ethers.utils.formatBytes32String("Canteen SRL");
                 // await canteenAssetContract.connect(canteen).setHolderSmartPolicy(allowMunicipalitySmartPolicy.address);
                 const tx = await canteenAssetContract.connect(canteen).setDescriptor(descriptor);
+                const r2 = await tx.wait();
+                console.log(`Gas used [setDescriptor Canteen]: ${r2.gasUsed.toString()}`);
 
                 const receipt = await tx.wait();
                 const event = receipt.events?.find((e: any) => e.event === "StateChanged");
@@ -142,6 +149,8 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
             it("Should allow the creator Municipality to add the BPMN model to the Choreography Mutable Asset", async function () {
                 const bpmn = "ipfs://choreography-canteen-bpmn";
                 const tx = await chorAssetContract.connect(municipality).setBpmn(bpmn);
+                const r1 = await tx.wait();
+                console.log(`Gas used [setBpmn Choreography]: ${r1.gasUsed.toString()}`);
 
                 const receipt = await tx.wait();
                 const event = receipt.events?.find((e: any) => e.event === "StateChanged");
@@ -150,7 +159,9 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
 
             it("Should allow the creator Municipality to add Supplier and Canteen mutable assets as participants", async function () {
                 const participants = [supplierAssetContract.address, canteenAssetContract.address];
-                await chorAssetContract.connect(municipality).setParticipants(participants);
+                const tx = await chorAssetContract.connect(municipality).setParticipants(participants);
+                const r1 = await tx.wait();
+                console.log(`Gas used [setParticipants Choreography]: ${r1.gasUsed.toString()}`);
 
                 const chorePartipants = await chorAssetContract.getParticipants();
                 expect(chorePartipants).to.deep.equal(participants);
@@ -160,11 +171,14 @@ describe("ChorNMT - Testbed Assets Evolution", function () {
 
             it("Should allow the creator Municipality to add messages to Supplier and Canteen mutable assets", async function () {
                 const supplierMessages = [ethers.utils.formatBytes32String("MessageSupplier1"), ethers.utils.formatBytes32String("MessageSupplier2")];
-                await supplierAssetContract.connect(municipality).setMessages(supplierMessages);
+                const tx1 = await supplierAssetContract.connect(municipality).setMessages(supplierMessages);
 
-
+                const r1 = await tx1.wait();
+                console.log(`Gas used [setMessages Supplier]: ${r1.gasUsed.toString()}`);
                 const canteenMessages = [ethers.utils.formatBytes32String("MessageCanteen1"), ethers.utils.formatBytes32String("MessageCanteen2")];
-                await canteenAssetContract.connect(municipality).setMessages(canteenMessages);
+                const tx2 = await canteenAssetContract.connect(municipality).setMessages(canteenMessages);
+                const r2 = await tx1.wait();
+                console.log(`Gas used [setMessages Canteen]: ${r2.gasUsed.toString()}`);
 
                 const supplierMessagesAfter = await supplierAssetContract.getMessages();
                 expect(supplierMessagesAfter).to.deep.equal(supplierMessages);
